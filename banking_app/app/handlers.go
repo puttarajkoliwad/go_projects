@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"encoding/json"
 	"encoding/xml"
+	"github.com/gorilla/mux"
 )
 
 type Customer struct {
@@ -13,7 +14,7 @@ type Customer struct {
 	Zipcode string `json:"zipcode", xml:"zipcode"`
 }
 
-func GreetingsHandler(w http.ResponseWriter, r *http.Request) {
+func greetingsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello world!")
 }
 
@@ -24,7 +25,7 @@ func getAllCustomers() []Customer {
 	}
 }
 
-func GetAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
+func getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
 	customers := getAllCustomers()
 
 	if r.Header.Get("Content-Type") == "application/xml" {
@@ -34,4 +35,13 @@ func GetAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(customers)
+}
+
+func getCustomer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	fmt.Fprintf(w, vars["customer_id"])
+}
+
+func createCustomer(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "create customer")
 }
