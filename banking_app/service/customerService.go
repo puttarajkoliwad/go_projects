@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/puttarajkoliwad/go_projects/banking_app/app/domain"
+	"github.com/puttarajkoliwad/go_projects/banking_app/domain"
 )
 
 type CustomerService interface {

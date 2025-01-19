@@ -6,12 +6,17 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"github.com/gorilla/mux"
+	"github.com/puttarajkoliwad/go_projects/banking_app/service"
 )
 
 type Customer struct {
 	Name string `json:"name" xml:"name"`
 	City string `json:"city" xml:"city"`
 	Zipcode string `json:"zipcode", xml:"zipcode"`
+}
+
+type CustomerHandlers struct {
+	svc service.CustomerService
 }
 
 func greetingsHandler(w http.ResponseWriter, r *http.Request) {
@@ -25,8 +30,9 @@ func getAllCustomers() []Customer {
 	}
 }
 
-func getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
-	customers := getAllCustomers()
+func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
+	// customers := getAllCustomers()
+	customers, _ := ch.service.GetAllCustomers()
 
 	if r.Header.Get("Content-Type") == "application/xml" {
 		w.Header().Set("Content-Type", "application/xml")
