@@ -4,7 +4,7 @@ type Customer struct {
 	Id string
 	Name string
 	City string
-	Zicode string
+	Zipcode string
 	Dob string
 	Status string
 }

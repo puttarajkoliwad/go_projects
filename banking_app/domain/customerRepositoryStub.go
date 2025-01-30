@@ -9,12 +9,12 @@ func (s CustomerRepositoryStub) FindAll() ([]Customer, error) {
 }
 
 func NewCustomerRepositoryStub() CustomerRepositoryStub {
-	customers := &[]Customer{
-		{"1", "Rahul", "Blr", "2000-01-01", "1"},
-		{"2", "Chetan", "Blr", "2000-01-01", "1"},
+	customers := []Customer {
+		{"1", "Rahul", "Blr", "560085", "2000-01-01", "1"},
+		{"2", "Chetan", "Blr", "560085", "2000-01-01", "1"},
 	}
 
-	return &CustomerRepositoryStub {
-		customers
+	return CustomerRepositoryStub {
+		customers,
 	}
 }

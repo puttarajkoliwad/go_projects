@@ -32,7 +32,7 @@ func getAllCustomers() []Customer {
 
 func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
 	// customers := getAllCustomers()
-	customers, _ := ch.service.GetAllCustomers()
+	customers, _ := ch.svc.GetAllCustomers()
 
 	if r.Header.Get("Content-Type") == "application/xml" {
 		w.Header().Set("Content-Type", "application/xml")

@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"github.com/gorilla/mux" // alternative: gin-gonic/gin
+	"github.com/puttarajkoliwad/go_projects/banking_app/service"
+	"github.com/puttarajkoliwad/go_projects/banking_app/domain"
 )
 
 func Start() {
@@ -12,7 +14,8 @@ func Start() {
 
 	// wiring
 	ch := &CustomerHandlers{
-		service.NewCustomerService(domain.NewCustomerRepositoryStub())
+		// service.NewCustomerService(domain.NewCustomerRepositoryStub())
+		service.NewCustomerService(domain.NewCustomerRepositoryDB()),
 	}
 
 	// define routes
