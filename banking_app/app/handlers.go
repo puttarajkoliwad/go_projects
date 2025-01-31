@@ -30,7 +30,7 @@ func getAllCustomers() []Customer {
 	}
 }
 
-func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
+func (ch CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
 	// customers := getAllCustomers()
 	customers, _ := ch.svc.GetAllCustomers()
 
@@ -43,9 +43,18 @@ func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *htt
 	json.NewEncoder(w).Encode(customers)
 }
 
-func getCustomer(w http.ResponseWriter, r *http.Request) {
+func (ch CustomerHandlers) getCustomer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	fmt.Fprintf(w, vars["customer_id"])
+	// fmt.Fprintf(w, vars["customer_id"])
+
+	customer, err := ch.svc.GetCustomer(vars["customer_id"])
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, err.Error())
+	}else{
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(customer)
+	}
 }
 
 func createCustomer(w http.ResponseWriter, r *http.Request) {
