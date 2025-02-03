@@ -49,12 +49,13 @@ func (ch CustomerHandlers) getCustomer(w http.ResponseWriter, r *http.Request) {
 
 	customer, err := ch.svc.GetCustomer(vars["customer_id"])
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(err.Code)
 		fmt.Fprintf(w, err.Error())
-	}else{
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(customer)
+		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(customer)
 }
 
 func createCustomer(w http.ResponseWriter, r *http.Request) {

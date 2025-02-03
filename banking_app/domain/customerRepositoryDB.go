@@ -1,10 +1,12 @@
 package domain
 
 import (
+	"net/http"
 	"database/sql"
 	"time"
 	"log"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/puttarajkoliwad/go_projects/banking_app/errs"
 )
 
 type CustomerRepositoryDB struct {
@@ -35,17 +37,21 @@ func (d CustomerRepositoryDB) FindAll() ([]Customer, error) {
 	return customers, nil
 }
 
-func (cr CustomerRepositoryDB) FindById(id string) (*Customer, error) {
-	sql := "select * from customers where customer_id = ?"
+func (cr CustomerRepositoryDB) FindById(id string) (*Customer, *errs.AppError) {
+	q := "select * from customers where customer_id = ?"
 
-	row := cr.client.QueryRow(sql, id)
+	row := cr.client.QueryRow(q, id)
 
 	var c Customer
 	err := row.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.Dob, &c.Status)
 
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, &errs.AppError{http.StatusNotFound, "Customer does not exist!"}
+		}
+
 		log.Println("Error scanning customer details", err.Error())
-		return nil, err
+		return nil, &errs.AppError{http.StatusInternalServerError, "Unexpected database error!"}
 	}
 
 	return &c, nil
