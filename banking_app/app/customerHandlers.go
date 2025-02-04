@@ -9,12 +9,6 @@ import (
 	"github.com/puttarajkoliwad/go_projects/banking_app/service"
 )
 
-type Customer struct {
-	Name string `json:"name" xml:"name"`
-	City string `json:"city" xml:"city"`
-	Zipcode string `json:"zipcode", xml:"zipcode"`
-}
-
 type CustomerHandlers struct {
 	svc service.CustomerService
 }
@@ -23,14 +17,14 @@ func greetingsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello world!")
 }
 
-func getAllCustomers() []Customer {
-	return []Customer{
-		{"Rahul", "Blr", "567867"},
-		{"Chetan", "blr", "567867"},
-	}
-}
+// func getAllCustomers() []Customer {
+// 	return []Customer{
+// 		{"Rahul", "Blr", "567867"},
+// 		{"Chetan", "blr", "567867"},
+// 	}
+// }
 
-func (ch CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
+func (ch CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
 	// customers := getAllCustomers()
 	customers, _ := ch.svc.GetAllCustomers()
 
