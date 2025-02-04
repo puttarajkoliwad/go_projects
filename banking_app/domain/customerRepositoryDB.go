@@ -13,10 +13,21 @@ type CustomerRepositoryDB struct {
 	client *sql.DB
 }
 
-func (d CustomerRepositoryDB) FindAll() ([]Customer, error) {
+func (d CustomerRepositoryDB) FindAll(status string) ([]Customer, error) {
+	var rows *sql.Rows
+	var err error
+
 	findAllSql := "select * from customers"
 
-	rows, err := d.client.Query(findAllSql)	
+	if status != "" {
+		findAllSql += " where status = ?"
+		rows, err = d.client.Query(findAllSql, status)
+	}else{
+		rows, err = d.client.Query(findAllSql)
+	}
+
+	log.Println(findAllSql)
+
 	if err != nil {
 		log.Println("Error fetching customers!" + err.Error())
 		return nil, err

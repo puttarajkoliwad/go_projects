@@ -25,8 +25,11 @@ func greetingsHandler(w http.ResponseWriter, r *http.Request) {
 // }
 
 func (ch CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
+	// get query params
+	filters := r.URL.Query()
+
 	// customers := getAllCustomers()
-	customers, err := ch.svc.GetAllCustomers()
+	customers, err := ch.svc.GetAllCustomers(filters.Get("status"))
 
 	if err != nil {
 		writeJsonResponse(w, 500, &errs.AppError{Message: "Unable to fetch customers!"})
