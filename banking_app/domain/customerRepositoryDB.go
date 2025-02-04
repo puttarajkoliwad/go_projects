@@ -47,6 +47,7 @@ func (cr CustomerRepositoryDB) FindById(id string) (*Customer, *errs.AppError) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
+			log.Println(err)
 			return nil, &errs.AppError{http.StatusNotFound, "Customer does not exist!"}
 		}
 
