@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 	"encoding/json"
-	"encoding/xml"
 	"github.com/gorilla/mux"
 	"github.com/puttarajkoliwad/go_projects/banking_app/service"
+	"github.com/puttarajkoliwad/go_projects/banking_app/errs"
 )
 
 type CustomerHandlers struct {
@@ -26,15 +26,19 @@ func greetingsHandler(w http.ResponseWriter, r *http.Request) {
 
 func (ch CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
 	// customers := getAllCustomers()
-	customers, _ := ch.svc.GetAllCustomers()
+	customers, err := ch.svc.GetAllCustomers()
 
-	if r.Header.Get("Content-Type") == "application/xml" {
-		w.Header().Set("Content-Type", "application/xml")
-		xml.NewEncoder(w).Encode(customers)
+	if err != nil {
+		writeJsonResponse(w, 500, &errs.AppError{Message: "Unable to fetch customers!"})
+		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(customers)
+	// if r.Header.Get("Content-Type") == "application/xml" {
+	// 	w.Header().Set("Content-Type", "application/xml")
+	// 	xml.NewEncoder(w).Encode(customers)
+	// }
+
+	writeJsonResponse(w, http.StatusOK, customers)
 }
 
 func (ch CustomerHandlers) getCustomer(w http.ResponseWriter, r *http.Request) {
