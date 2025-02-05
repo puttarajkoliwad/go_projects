@@ -3,11 +3,11 @@ package domain
 import "github.com/puttarajkoliwad/go_projects/banking_app/errs"
 
 type Customer struct {
-	Id string
+	Id string		`db:"customer_id"`
 	Name string
 	City string
 	Zipcode string
-	Dob string
+	Dob string		`db:"date_of_birth"`
 	Status string
 }
 

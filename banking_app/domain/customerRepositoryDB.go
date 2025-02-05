@@ -3,6 +3,7 @@ package domain
 import (
 	"net/http"
 	"database/sql"
+	"github.com/jmoiron/sqlx"
 	"time"
 	"github.com/puttarajkoliwad/go_projects/banking_app/logger"
 	_ "github.com/go-sql-driver/mysql"
@@ -10,20 +11,20 @@ import (
 )
 
 type CustomerRepositoryDB struct {
-	client *sql.DB
+	client *sqlx.DB
 }
 
 func (d CustomerRepositoryDB) FindAll(status string) ([]Customer, error) {
-	var rows *sql.Rows
 	var err error
 
+	customers := make([]Customer, 0)
 	findAllSql := "select * from customers"
 
 	if status != "" {
 		findAllSql += " where status = ?"
-		rows, err = d.client.Query(findAllSql, status)
+		err = d.client.Select(&customers, findAllSql, status)
 	}else{
-		rows, err = d.client.Query(findAllSql)
+		err = d.client.Select(&customers, findAllSql)
 	}
 
 	logger.Debug(findAllSql)
@@ -33,17 +34,22 @@ func (d CustomerRepositoryDB) FindAll(status string) ([]Customer, error) {
 		return nil, err
 	}
 
-	customers := make([]Customer, 0)
-	for rows.Next() {
-		var c Customer
-		err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.Dob, &c.Status)
+	// customers := make([]Customer, 0)
+	// if err := sqlx.StructScan(rows, &customers); err != nil {
+	// 	logger.Error("Error scannign rows		" + err.Error())
+	// 	return nil, err
+	// }
 
-		if err != nil {
-			logger.Error("Error scanning customer rows" + err.Error())
-			return nil, err
-		}
-		customers = append(customers, c)
-	}
+	// for rows.Next() {
+	// 	var c Customer
+	// 	err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.Dob, &c.Status)
+
+	// 	if err != nil {
+	// 		logger.Error("Error scanning customer rows" + err.Error())
+	// 		return nil, err
+	// 	}
+	// 	customers = append(customers, c)
+	// }
 
 	return customers, nil
 }
@@ -51,10 +57,11 @@ func (d CustomerRepositoryDB) FindAll(status string) ([]Customer, error) {
 func (cr CustomerRepositoryDB) FindById(id string) (*Customer, *errs.AppError) {
 	q := "select * from customers where customer_id = ?"
 
-	row := cr.client.QueryRow(q, id)
+	// row := cr.client.QueryRow(q, id)
 
 	var c Customer
-	err := row.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.Dob, &c.Status)
+	err := cr.client.Get(&c, q, id)
+	// err := row.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.Dob, &c.Status)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -70,7 +77,7 @@ func (cr CustomerRepositoryDB) FindById(id string) (*Customer, *errs.AppError) {
 }
 
 func NewCustomerRepositoryDB() (*CustomerRepositoryDB) {
-	client, err := sql.Open("mysql", "root@tcp(localhost:3306)/banking")
+	client, err := sqlx.Open("mysql", "root@tcp(localhost:3306)/banking")
 	if err != nil {
 		panic(err)
 	}
