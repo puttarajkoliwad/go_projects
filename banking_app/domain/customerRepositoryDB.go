@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"database/sql"
 	"time"
-	"log"
+	"github.com/puttarajkoliwad/go_projects/banking_app/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/puttarajkoliwad/go_projects/banking_app/errs"
 )
@@ -26,10 +26,10 @@ func (d CustomerRepositoryDB) FindAll(status string) ([]Customer, error) {
 		rows, err = d.client.Query(findAllSql)
 	}
 
-	log.Println(findAllSql)
+	logger.Debug(findAllSql)
 
 	if err != nil {
-		log.Println("Error fetching customers!" + err.Error())
+		logger.Error("Error fetching customers!" + err.Error())
 		return nil, err
 	}
 
@@ -39,7 +39,7 @@ func (d CustomerRepositoryDB) FindAll(status string) ([]Customer, error) {
 		err := rows.Scan(&c.Id, &c.Name, &c.City, &c.Zipcode, &c.Dob, &c.Status)
 
 		if err != nil {
-			log.Println("Error scanning customer rows" + err.Error())
+			logger.Error("Error scanning customer rows" + err.Error())
 			return nil, err
 		}
 		customers = append(customers, c)
@@ -58,11 +58,11 @@ func (cr CustomerRepositoryDB) FindById(id string) (*Customer, *errs.AppError) {
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			log.Println(err)
+			logger.Error("Customer does not exist!   " + err.Error())
 			return nil, &errs.AppError{http.StatusNotFound, "Customer does not exist!"}
 		}
 
-		log.Println("Error scanning customer details", err.Error())
+		logger.Error("Error scanning customer details		" + err.Error())
 		return nil, &errs.AppError{http.StatusInternalServerError, "Unexpected database error!"}
 	}
 
