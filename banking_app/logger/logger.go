@@ -11,6 +11,6 @@ func init() {
 	}
 }
 
-func Info(message string, fields ...zap.Fields) {
+func Info(message string, fields ...zap.Field) {
 	log.Info(message, fields...)
 }
