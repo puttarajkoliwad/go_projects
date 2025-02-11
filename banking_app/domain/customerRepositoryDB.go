@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"database/sql"
 	"github.com/jmoiron/sqlx"
-	"time"
+	// "time"
 	"github.com/puttarajkoliwad/go_projects/banking_app/logger"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/puttarajkoliwad/go_projects/banking_app/errs"
@@ -76,16 +76,7 @@ func (cr CustomerRepositoryDB) FindById(id string) (*Customer, *errs.AppError) {
 	return &c, nil
 }
 
-func NewCustomerRepositoryDB() (*CustomerRepositoryDB) {
-	client, err := sqlx.Open("mysql", "root@tcp(localhost:3306)/banking")
-	if err != nil {
-		panic(err)
-	}
-	// See "Important settings" section.
-	client.SetConnMaxLifetime(time.Minute * 3)
-	client.SetMaxOpenConns(10)
-	client.SetMaxIdleConns(10)
-
+func NewCustomerRepositoryDB(client *sqlx.DB) (*CustomerRepositoryDB) {
 	return &CustomerRepositoryDB{
 		client,
 	}
